@@ -3,12 +3,12 @@ import java.util.Random;
 
 public class Maze {
 
-	private boolean board[][];                              
+	private boolean board[][];
 	final int height;
 	final int length;
 	final int stepLimit;
 	private Random rand = new Random();
-	
+
 	public Maze( int height, int length, int stepLimit){
 		if ( (height % 2) == 0){
 			height += 1;
@@ -17,43 +17,42 @@ public class Maze {
 		this.length = length;
 		this.stepLimit = stepLimit;
 		board = new boolean[this.height][this.length];
-		
+
 		this.startPath();
-		this.printBoard();
 		System.out.println("\n");
 		this.setFinish();
 		this.printBoard();
 	}
-	
+
 	private void startPath(){
 		int middle = (height)/2;
 		RCLocation currentLoc = new RCLocation( middle, 0);
 		DirectionInDegrees dir = new DirectionInDegrees(0);
-		
+
 		board[ currentLoc.getR() ][ currentLoc.getC() ] = true;
-		
-		
+
+
 		this.newPath(currentLoc, dir);
 	}
-	
+
 	private void newPath(RCLocation currentLoc, DirectionInDegrees dir){
 		int counter = 0;
 		boolean canStep = true;
 		boolean canCreateLeft = true;
 		boolean canCreateRight = true;
-		
+
 		DirectionInDegrees left = new DirectionInDegrees(dir.getDirection()+ 90);
 		DirectionInDegrees right = new DirectionInDegrees(dir.getDirection() - 90);
-		
-		
-		
+
+
+
 		int selection;
-		
+
 		while (counter < stepLimit){
 			counter++;
-			
+
 			selection = rand.nextInt(2) + 1;
-			
+
 			if(selection == 1){
 				canCreateLeft = testMove(currentLoc.getNeighborArrayInDirection(left));
 				if (canCreateLeft){
@@ -65,7 +64,7 @@ public class Maze {
 					this.newPath(currentLoc, right);
 				}
 			}
-			
+
 			if(selection == 2){
 				canCreateRight = testMove(currentLoc.getNeighborArrayInDirection(right));
 				if (canCreateRight){
@@ -86,19 +85,19 @@ public class Maze {
 			}
 		}
 	}
-	
-	
+
+
 	public int getHeight(){
 		return height;
 	}
-	
+
 	public int getLength(){
 		return length;
 	}
-	
-	
+
+
 	private boolean testMove(RCLocation loc[]){
-		
+
 		for (int index = 0; index < loc.length;index++){
 			if ( loc[index].getR() < 0)
 				return false;
@@ -113,13 +112,13 @@ public class Maze {
 		}
 		return true;
 	}
-	
+
 	private boolean testFinishPath (RCLocation loc){
 		boolean canSetPath = true;
 		boolean loopEnder = false;
 		DirectionInDegrees dir = new DirectionInDegrees(180);
 		RCLocation[] neighborArray = loc.getNeighborArrayInDirection(dir);
-		
+
 		try
 		{
 			if (loc.getC() == length -1) {
@@ -148,10 +147,10 @@ public class Maze {
 						}
 						if ( this.testMove(neighborArray) == false ) // finish path wants to run into another path
 							loopEnder = true;
-					
+
 					loc.advanceInDirection(dir);
 					neighborArray = loc.getNeighborArrayInDirection(dir);
-			
+
 				}
 				return canSetPath;
 			}else
@@ -162,7 +161,7 @@ public class Maze {
 			return false;
 		}
 	}
-	
+
 	private void setFinish(){
 		int middle = (height)/2;
 		RCLocation loc = new RCLocation(middle, length - 1);
@@ -171,10 +170,10 @@ public class Maze {
 		while ( !this.testFinishPath(loc) || Math.abs(addValue) > height/2){
 			if (addValue > 0)
 				addValue = addValue * -1;
-			else 
+			else
 				addValue = addValue*-1 + 1; //addValue values will look like this: (0, 1, -1, 2, -2, 3, -3)
 			loc = new RCLocation(middle + addValue, length - 1);
-		}	
+		}
 		if (this.testFinishPath(loc)){
 			while (testMove(loc.getNeighborArrayInDirection(dir))){
 				board[loc.getR()][loc.getC()] = true;
@@ -182,14 +181,14 @@ public class Maze {
 			}
 			board[loc.getR()][loc.getC()] = true;
 		}
-		
+
 	}
-	
+
 	public boolean[][] getArray(){
 		return board;
 	}
-	
-	
+
+
 	private void printBoard() {
 		for(int row = 0; row < height; row++){
 			for (int col = 0; col < length; col++){
@@ -198,6 +197,5 @@ public class Maze {
 			System.out.print("\n");
 		}
 	}
-	
-}
 
+}
